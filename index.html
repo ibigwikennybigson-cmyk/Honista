@@ -1,0 +1,895 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexora - Social Network</title>
+
+<style>
+:root {
+  --purple: #6d5ce8;
+  --light: #eeeaff;
+  --bg: #f5f6fb;
+  --text: #202238;
+  --muted: #85889d;
+  --line: #ececf3;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: Arial, sans-serif;
+}
+button, input, textarea { font: inherit; }
+button { cursor: pointer; }
+
+.topbar {
+  height: 70px;
+  background: white;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 5%;
+  position: sticky;
+  top: 0;
+  z-index: 5;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 25px;
+  font-weight: bold;
+  color: var(--purple);
+}
+.brand-icon {
+  background: linear-gradient(135deg,#7564eb,#e6a1c9);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+.search {
+  width: 35%;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--bg);
+}
+.layout {
+  max-width: 1300px;
+  margin: 25px auto;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 200px 1fr 260px;
+  gap: 22px;
+}
+.panel, .card, .composer {
+  background: white;
+  border-radius: 18px;
+  padding: 17px;
+  box-shadow: 0 8px 25px #25224a0c;
+  margin-bottom: 15px;
+}
+.nav {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  text-align: left;
+  border-radius: 10px;
+  font-weight: bold;
+  margin: 3px 0;
+}
+.nav:hover, .nav.active {
+  background: var(--light);
+  color: var(--purple);
+}
+.promo {
+  background: linear-gradient(135deg,#7564eb,#d69dcc);
+  color: white;
+  padding: 18px;
+  border-radius: 17px;
+}
+.promo button {
+  background: white;
+  color: var(--purple);
+  border: 0;
+  padding: 9px;
+  border-radius: 9px;
+}
+.welcome {
+  background: linear-gradient(105deg,white,#f2efff);
+  padding: 22px;
+  border-radius: 18px;
+  margin-bottom: 18px;
+}
+.welcome h2 { margin-top: 0; }
+.stories {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  background: white;
+  border-radius: 18px;
+  overflow-x: auto;
+}
+.story {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  min-width: 55px;
+}
+.story-circle {
+  width: 52px;
+  height: 52px;
+  background: linear-gradient(135deg,#7564eb,#e6a1c9);
+  border: 3px solid white;
+  outline: 2px solid #a991ed;
+  border-radius: 17px;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+.composer { margin-top: 18px; }
+.composer textarea {
+  width: 100%;
+  min-height: 75px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 12px;
+  resize: vertical;
+}
+.primary {
+  background: var(--purple);
+  color: white;
+  border: none;
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+.primary:hover { background: #5747d5; }
+.post {
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  margin: 15px 0;
+  box-shadow: 0 8px 25px #25224a0c;
+}
+.post-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg,#7564eb,#bba4f5);
+  display: grid;
+  place-items: center;
+  color: white;
+  font-weight: bold;
+}
+.post-header small { color: var(--muted); }
+.post-text {
+  font-size: 14px;
+  line-height: 1.6;
+  margin: 15px 0;
+  overflow-wrap: anywhere;
+}
+.post-image {
+  width: 100%;
+  max-height: 350px;
+  object-fit: cover;
+  border-radius: 15px;
+}
+.post-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  margin-top: 12px;
+}
+.action {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  padding: 8px;
+  border-radius: 9px;
+}
+.action:hover, .action.liked {
+  background: var(--light);
+  color: var(--purple);
+}
+.comment-area { display: none; margin-top: 12px; }
+.comment-area.open { display: block; }
+.comment-area input {
+  width: 75%;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+}
+.comment {
+  background: var(--bg);
+  padding: 10px;
+  margin: 7px 0;
+  border-radius: 10px;
+  font-size: 13px;
+}
+.person {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0;
+}
+.person-info { flex: 1; }
+.person-info small {
+  display: block;
+  color: var(--muted);
+}
+.follow {
+  border: 1px solid var(--light);
+  background: var(--light);
+  color: var(--purple);
+  padding: 8px;
+  border-radius: 9px;
+}
+.page-card {
+  background: white;
+  border-radius: 18px;
+  padding: 22px;
+  min-height: 300px;
+}
+.community {
+  padding: 15px 0;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.community button {
+  padding: 8px 12px;
+  border: none;
+  background: var(--light);
+  color: var(--purple);
+  border-radius: 9px;
+}
+.profile-cover {
+  height: 120px;
+  background: linear-gradient(110deg,#7567eb,#efa9ca);
+  border-radius: 15px;
+}
+.profile-stats {
+  display: flex;
+  gap: 35px;
+  border-block: 1px solid var(--line);
+  padding: 15px 0;
+  margin: 15px 0;
+}
+.toast {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #29283e;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 12px;
+  display: none;
+  z-index: 10;
+}
+.toast.show { display: block; }
+
+.mobile-nav { display: none; }
+
+@media(max-width:1000px) {
+  .layout { grid-template-columns: 180px 1fr; }
+  .right { display: none; }
+}
+@media(max-width:650px) {
+  .topbar { padding: 0 12px; gap: 10px; }
+  .search { width: 45%; }
+  .layout { display: block; padding: 12px; }
+  .left { display: none; }
+  .mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    justify-content: space-around;
+    padding: 12px 0;
+    border-top: 1px solid var(--line);
+  }
+  .mobile-nav button {
+    border: none;
+    background: transparent;
+    color: var(--purple);
+    font-weight: bold;
+  }
+  body { padding-bottom: 60px; }
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-icon">N</span>
+    NEXORA
+  </div>
+  <input class="search" id="search" placeholder="Search Nexora...">
+  <strong>👋 Alex</strong>
+</header>
+
+<div class="layout">
+
+  <!-- LEFT NAVIGATION -->
+  <aside class="left">
+    <div class="panel">
+      <button class="nav active" data-page="home">⌂ Home</button>
+      <button class="nav" data-page="explore">⌕ Explore</button>
+      <button class="nav" data-page="communities">♧ Communities</button>
+      <button class="nav" data-page="saved">▣ Saved posts</button>
+      <button class="nav" data-page="profile">♙ My profile</button>
+    </div>
+
+    <div class="promo">
+      <h3>Find your people!</h3>
+      <p>Connect with people who share your interests.</p>
+      <button data-page="communities">Explore groups</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main id="main">
+
+    <section class="welcome">
+      <h2>Welcome to Nexora! ✨</h2>
+      <p>Find your people. Share your world. Grow together.</p>
+    </section>
+
+    <h3>Stories</h3>
+    <div class="stories">
+      <div class="story"><div class="story-circle">+</div>Your story</div>
+      <div class="story"><div class="story-circle">MC</div>Maya</div>
+      <div class="story"><div class="story-circle">JT</div>Jordan</div>
+      <div class="story"><div class="story-circle">SK</div>Sam</div>
+      <div class="story"><div class="story-circle">LW</div>Lina</div>
+    </div>
+
+    <!-- CREATE A POST -->
+    <section class="composer">
+      <h3>Create a post</h3>
+      <textarea id="postText" placeholder="What's on your mind?"></textarea>
+      <br><br>
+      <button class="action" id="photoButton">📷 Add photo</button>
+      <input type="file" id="photoFile" accept="image/*" hidden>
+      <button class="primary" id="publish">Share post ↗</button>
+    </section>
+
+    <h3>Your feed</h3>
+    <section id="feed"></section>
+
+  </main>
+
+  <!-- RIGHT SIDEBAR -->
+  <aside class="right">
+
+    <div class="panel">
+      <h3>People to follow</h3>
+
+      <div class="person">
+        <div class="avatar">MC</div>
+        <div class="person-info">
+          <strong>Maya Chen</strong>
+          <small>Photography</small>
+        </div>
+        <button class="follow" data-follow="Maya Chen">Follow</button>
+      </div>
+
+      <div class="person">
+        <div class="avatar">JT</div>
+        <div class="person-info">
+          <strong>Jordan Taylor</strong>
+          <small>Creative projects</small>
+        </div>
+        <button class="follow" data-follow="Jordan Taylor">Follow</button>
+      </div>
+
+      <div class="person">
+        <div class="avatar">SK</div>
+        <div class="person-info">
+          <strong>Sam Kim</strong>
+          <small>Books and ideas</small>
+        </div>
+        <button class="follow" data-follow="Sam Kim">Follow</button>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h3>Popular communities</h3>
+      <p>📸 Photography club</p>
+      <p>📚 Book lovers</p>
+      <p>🎨 Creative corner</p>
+      <p>🎮 Gaming community</p>
+    </div>
+
+  </aside>
+</div>
+
+<nav class="mobile-nav">
+  <button data-page="home">Home</button>
+  <button data-page="explore">Explore</button>
+  <button data-page="communities">Groups</button>
+  <button data-page="saved">Saved</button>
+  <button data-page="profile">Profile</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// NEXORA SOCIAL NETWORK
+
+const starterPosts = [
+  {
+    id: "p1",
+    name: "Maya Chen",
+    initials: "MC",
+    text: "Hello Nexora! 🌅 Welcome to our new social community!",
+    likes: 12,
+    comments: []
+  },
+  {
+    id: "p2",
+    name: "Jordan Taylor",
+    initials: "JT",
+    text: "What is everyone doing this weekend? Let's share ideas! ✨",
+    likes: 8,
+    comments: []
+  }
+];
+
+let savedData = {};
+try {
+  savedData = JSON.parse(localStorage.getItem("nexora-data") || "{}");
+} catch(error) {}
+
+let posts = Array.isArray(savedData.posts)
+  ? savedData.posts : starterPosts;
+
+let liked = Array.isArray(savedData.liked)
+  ? savedData.liked : [];
+
+let saved = Array.isArray(savedData.saved)
+  ? savedData.saved : [];
+
+let followed = Array.isArray(savedData.followed)
+  ? savedData.followed : [];
+
+let selectedPhoto = "";
+let currentPage = "home";
+
+function saveData() {
+  localStorage.setItem("nexora-data", JSON.stringify({
+    posts, liked, saved, followed
+  }));
+}
+
+function escapeHTML(value) {
+  return String(value).replace(/[&<>"']/g, c => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  })[c]);
+}
+
+function showMessage(message) {
+  const box = document.getElementById("toast");
+  box.textContent = message;
+  box.classList.add("show");
+
+  clearTimeout(showMessage.timer);
+  showMessage.timer = setTimeout(() => {
+    box.classList.remove("show");
+  }, 2200);
+}
+
+// DISPLAY POSTS
+
+function postHTML(post) {
+  const isLiked = liked.includes(post.id);
+  const isSaved = saved.includes(post.id);
+
+  return `
+    <article class="post">
+      <div class="post-header">
+        <div class="avatar">${escapeHTML(post.initials)}</div>
+        <div>
+          <strong>${escapeHTML(post.name)}</strong><br>
+          <small>${escapeHTML(post.time || "Recently")}</small>
+        </div>
+      </div>
+
+      <p class="post-text">${escapeHTML(post.text)}</p>
+
+      ${post.photo
+        ? `<img class="post-image" src="${post.photo}" alt="Shared photo">`
+        : ""}
+
+      <p class="post-stats">
+        ♡ ${post.likes + (isLiked ? 1 : 0)} likes
+        &nbsp; · &nbsp; ${post.comments.length} comments
+      </p>
+
+      <div class="post-actions">
+        <button class="action ${isLiked ? "liked" : ""}"
+          data-action="like" data-id="${post.id}">
+          ${isLiked ? "♥ Liked" : "♡ Like"}
+        </button>
+
+        <button class="action"
+          data-action="comment" data-id="${post.id}">
+          💬 Comment
+        </button>
+
+        <button class="action"
+          data-action="save" data-id="${post.id}">
+          ${isSaved ? "✓ Saved" : "▣ Save"}
+        </button>
+      </div>
+
+      <div class="comment-area" id="comments-${post.id}">
+        ${post.comments.map(c => `
+          <div class="comment">
+            <strong>${escapeHTML(c.name)}:</strong>
+            ${escapeHTML(c.text)}
+          </div>
+        `).join("")}
+
+        <form class="comment-form" data-id="${post.id}">
+          <input placeholder="Write a comment..." maxlength="180" required>
+          <button class="primary">Send</button>
+        </form>
+      </div>
+    </article>
+  `;
+}
+
+function renderFeed(list = posts) {
+  const feed = document.getElementById("feed");
+  if (!feed) return;
+
+  feed.innerHTML = list.length
+    ? list.map(postHTML).join("")
+    : "<div class='card'>No posts found.</div>";
+}
+
+// CREATE POSTS
+
+function publishPost() {
+  const text = document.getElementById("postText")?.value.trim();
+
+  if (!text && !selectedPhoto) {
+    showMessage("Write something or choose a photo first.");
+    return;
+  }
+
+  const newPost = {
+    id: "post-" + Date.now(),
+    name: "Alex Morgan",
+    initials: "AM",
+    text: text,
+    photo: selectedPhoto,
+    likes: 0,
+    comments: [],
+    time: "Just now"
+  };
+
+  posts.unshift(newPost);
+  selectedPhoto = "";
+  saveData();
+  setPage("home");
+  showMessage("Your post has been shared!");
+}
+
+// NAVIGATION
+
+function setPage(page) {
+  currentPage = page;
+
+  document.querySelectorAll("[data-page]").forEach(button => {
+    button.classList.toggle("active", button.dataset.page === page);
+  });
+
+  const main = document.getElementById("main");
+
+  if (page === "home") {
+    main.innerHTML = `
+      <section class="welcome">
+        <h2>Welcome to Nexora! ✨</h2>
+        <p>Find your people. Share your world.</p>
+      </section>
+      <section class="composer">
+        <h3>Create a post</h3>
+        <textarea id="postText" placeholder="What's on your mind?"></textarea>
+        <br><br>
+        <button class="action" id="photoButton">📷 Add photo</button>
+        <input type="file" id="photoFile" accept="image/*" hidden>
+        <button class="primary" id="publish">Share post ↗</button>
+      </section>
+      <h3>Your feed</h3>
+      <section id="feed"></section>
+    `;
+    renderFeed();
+  }
+
+  if (page === "explore") {
+    main.innerHTML = `
+      <section class="page-card">
+        <h2>Explore Nexora 🌍</h2>
+        <p>Discover new interests and people.</p>
+        <div class="community">📸 Photography club</div>
+        <div class="community">🎨 Art and design</div>
+        <div class="community">📚 Books and learning</div>
+        <div class="community">🎮 Gaming community</div>
+        <div class="community">🎵 Music lovers</div>
+      </section>
+    `;
+  }
+
+  if (page === "communities") {
+    const groups = [
+      "📸 Photography club",
+      "📚 Book lovers",
+      "🎨 Creative corner",
+      "🎮 Gaming community",
+      "🎵 Music room",
+      "🌱 Green living"
+    ];
+
+    main.innerHTML = `
+      <section class="page-card">
+        <h2>Nexora Communities</h2>
+        <p>Meet people who share your interests.</p>
+        ${groups.map(g => `
+          <div class="community">
+            <strong>${g}</strong>
+            <button data-join="${g}">Join</button>
+          </div>
+        `).join("")}
+      </section>
+    `;
+  }
+
+  if (page === "saved") {
+    const chosen = posts.filter(p => saved.includes(p.id));
+
+    main.innerHTML = `
+      <section class="page-card">
+        <h2>Saved posts</h2>
+        <section id="savedFeed"></section>
+      </section>
+    `;
+
+    document.getElementById("savedFeed").innerHTML =
+      chosen.length
+        ? chosen.map(postHTML).join("")
+        : "You have not saved any posts yet.";
+  }
+
+  if (page === "profile") {
+    const mine = posts.filter(p => p.name === "Alex Morgan");
+
+    main.innerHTML = `
+      <section class="page-card">
+        <div class="profile-cover"></div>
+        <h2>Alex Morgan</h2>
+        <p>@alexmorgan</p>
+        <p>Welcome to my Nexora profile! ✨</p>
+
+        <div class="profile-stats">
+          <div><strong>${mine.length}</strong><br>Posts</div>
+          <div><strong>${followed.length}</strong><br>Following</div>
+          <div><strong>0</strong><br>Followers</div>
+        </div>
+
+        <h3>My posts</h3>
+        ${mine.map(postHTML).join("")}
+      </section>
+    `;
+  }
+}
+
+// BUTTON ACTIONS
+
+document.addEventListener("click", event => {
+
+  const nav = event.target.closest("[data-page]");
+  if (nav) {
+    setPage(nav.dataset.page);
+    return;
+  }
+
+  const action = event.target.closest("[data-action]");
+
+  if (action) {
+    const id = action.dataset.id;
+    const type = action.dataset.action;
+    const post = posts.find(p => p.id === id);
+
+    if (!post) return;
+
+    if (type === "like") {
+      liked = liked.includes(id)
+        ? liked.filter(x => x !== id)
+        : [...liked, id];
+
+      saveData();
+      renderCurrentFeed();
+    }
+
+    if (type === "save") {
+      saved = saved.includes(id)
+        ? saved.filter(x => x !== id)
+        : [...saved, id];
+
+      saveData();
+      renderCurrentFeed();
+      showMessage("Saved posts updated.");
+    }
+
+    if (type === "comment") {
+      document.getElementById("comments-" + id)
+        ?.classList.toggle("open");
+    }
+  }
+
+  if (event.target.id === "publish") {
+    publishPost();
+  }
+
+  if (event.target.id === "photoButton") {
+    document.getElementById("photoFile")?.click();
+  }
+
+  const follow = event.target.closest("[data-follow]");
+  if (follow) {
+    const name = follow.dataset.follow;
+
+    followed = followed.includes(name)
+      ? followed.filter(x => x !== name)
+      : [...followed, name];
+
+    saveData();
+    follow.textContent = followed.includes(name)
+      ? "Following" : "Follow";
+  }
+
+  const join = event.target.closest("[data-join]");
+  if (join) {
+    join.textContent =
+      join.textContent === "Join" ? "Joined" : "Join";
+
+    showMessage("Community membership updated.");
+  }
+});
+
+function renderCurrentFeed() {
+  if (currentPage === "home") {
+    renderFeed();
+  } else if (currentPage === "saved") {
+    const feed = document.getElementById("savedFeed");
+    if (feed) {
+      feed.innerHTML = posts
+        .filter(p => saved.includes(p.id))
+        .map(postHTML).join("");
+    }
+  }
+}
+
+// COMMENTS
+
+document.addEventListener("submit", event => {
+  const form = event.target.closest(".comment-form");
+  if (!form) return;
+
+  event.preventDefault();
+
+  const input = form.querySelector("input");
+  const text = input.value.trim();
+
+  if (!text) return;
+
+  const id = form.dataset.id;
+  const post = posts.find(p => p.id === id);
+
+  if (!post) return;
+
+  post.comments.push({
+    name: "Alex Morgan",
+    text: text
+  });
+
+  saveData();
+
+  const comment = document.createElement("div");
+  comment.className = "comment";
+
+  const author = document.createElement("strong");
+  author.textContent = "Alex Morgan: ";
+
+  comment.appendChild(author);
+  comment.appendChild(document.createTextNode(text));
+
+  form.before(comment);
+  input.value = "";
+
+  showMessage("Comment added!");
+});
+
+// PHOTO UPLOAD
+
+document.addEventListener("change", event => {
+  if (event.target.id !== "photoFile") return;
+
+  const file = event.target.files[0];
+  if (!file) return;
+
+  if (!file.type.startsWith("image/")) {
+    showMessage("Choose an image file.");
+    return;
+  }
+
+  if (file.size > 3 * 1024 * 1024) {
+    showMessage("Image must be smaller than 3 MB.");
+    return;
+  }
+
+  const reader = new FileReader();
+
+  reader.onload = () => {
+    selectedPhoto = reader.result;
+    showMessage("Photo ready to share.");
+  };
+
+  reader.readAsDataURL(file);
+});
+
+// SEARCH
+
+document.getElementById("search")
+  .addEventListener("input", event => {
+    const query = event.target.value.toLowerCase().trim();
+
+    if (currentPage !== "home") {
+      setPage("home");
+    }
+
+    const results = posts.filter(post =>
+      (post.name + " " + post.text)
+        .toLowerCase()
+        .includes(query)
+    );
+
+    renderFeed(query ? results : posts);
+  });
+
+// START THE WEBSITE
+
+setPage("home");
+
+</script>
+</body>
+</html>
