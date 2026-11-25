@@ -1,0 +1,330 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CALLS | My Website</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #080d18;
+    color: white;
+    min-height: 100vh;
+}
+
+header {
+    background: #111a2c;
+    padding: 22px 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: #00e5ff;
+}
+
+header a {
+    color: white;
+    text-decoration: none;
+}
+
+main {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+}
+
+.heading {
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.heading h1 {
+    color: #00e5ff;
+    font-size: 40px;
+}
+
+.heading p {
+    color: #aaa;
+    margin-top: 10px;
+}
+
+.call-box {
+    background: #121d32;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 0 30px #00e5ff15;
+}
+
+.call-box h2 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+.videos {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.video-container {
+    background: #050a13;
+    border-radius: 15px;
+    overflow: hidden;
+    text-align: center;
+}
+
+video {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+}
+
+.video-container p {
+    padding: 12px;
+    color: #00e5ff;
+}
+
+.status {
+    text-align: center;
+    margin: 25px 0;
+    color: #00e5ff;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+button {
+    border: none;
+    padding: 15px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    transition: .3s;
+}
+
+button:hover {
+    transform: scale(1.07);
+}
+
+.voice {
+    background: #00d9a6;
+    color: #06140f;
+}
+
+.video {
+    background: #277cff;
+    color: white;
+}
+
+.control {
+    background: #28364e;
+    color: white;
+}
+
+.end {
+    background: #ff3155;
+    color: white;
+}
+
+footer {
+    text-align: center;
+    color: #777;
+    padding: 30px;
+}
+
+@media(max-width: 600px) {
+    .videos {
+        grid-template-columns: 1fr;
+    }
+
+    header {
+        padding: 20px;
+    }
+
+    .heading h1 {
+        font-size: 30px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <div class="logo">CALLS</div>
+    <a href="index.html">← Back Home</a>
+</header>
+
+<main>
+
+    <div class="heading">
+        <h1>CALL CENTER 📞</h1>
+        <p>Talk, connect and share moments with friends.</p>
+    </div>
+
+    <div class="call-box">
+
+        <h2>My Calling Room</h2>
+
+        <div class="videos">
+
+            <div class="video-container">
+                <video id="myVideo" autoplay muted playsinline></video>
+                <p>YOU</p>
+            </div>
+
+            <div class="video-container">
+                <video id="friendVideo" autoplay playsinline></video>
+                <p>FRIEND</p>
+            </div>
+
+        </div>
+
+        <div class="status" id="status">
+            Ready to make a call
+        </div>
+
+        <div class="controls">
+
+            <button class="voice" onclick="startVoice()">
+                📞 Voice Call
+            </button>
+
+            <button class="video" onclick="startVideo()">
+                📹 Video Call
+            </button>
+
+            <button class="control" onclick="toggleMic()">
+                🎤 Mute / Unmute
+            </button>
+
+            <button class="control" onclick="toggleCamera()">
+                📷 Camera On / Off
+            </button>
+
+            <button class="end" onclick="endCall()">
+                ❌ End Call
+            </button>
+
+        </div>
+
+    </div>
+
+</main>
+
+<footer>
+    © 2026 CALLS | All Rights Reserved
+</footer>
+
+<script>
+
+let stream = null;
+
+async function startVoice() {
+    await startMedia(false);
+}
+
+async function startVideo() {
+    await startMedia(true);
+}
+
+async function startMedia(withVideo) {
+
+    try {
+
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+        }
+
+        stream = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: withVideo
+        });
+
+        document.getElementById("myVideo").srcObject = stream;
+
+        document.getElementById("status").innerText =
+            withVideo
+            ? "Camera and microphone activated"
+            : "Microphone activated - Voice call mode";
+
+    } catch (error) {
+
+        document.getElementById("status").innerText =
+            "Could not access microphone or camera.";
+
+        alert("Please allow camera and microphone permissions.");
+
+    }
+}
+
+function toggleMic() {
+
+    if (!stream) {
+        alert("Start a call first!");
+        return;
+    }
+
+    let tracks = stream.getAudioTracks();
+
+    tracks.forEach(track => {
+        track.enabled = !track.enabled;
+    });
+
+    document.getElementById("status").innerText =
+        tracks[0].enabled ? "Microphone ON" : "Microphone MUTED";
+}
+
+function toggleCamera() {
+
+    if (!stream || stream.getVideoTracks().length === 0) {
+        alert("Start a video call first!");
+        return;
+    }
+
+    let tracks = stream.getVideoTracks();
+
+    tracks.forEach(track => {
+        track.enabled = !track.enabled;
+    });
+
+    document.getElementById("status").innerText =
+        tracks[0].enabled ? "Camera ON" : "Camera OFF";
+}
+
+function endCall() {
+
+    if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+        stream = null;
+    }
+
+    document.getElementById("myVideo").srcObject = null;
+    document.getElementById("friendVideo").srcObject = null;
+
+    document.getElementById("status").innerText =
+        "Call ended successfully.";
+
+}
+
+</script>
+
+</body>
+</html>
